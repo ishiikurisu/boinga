@@ -1,14 +1,22 @@
 package main
 
-import "github.com/ishiikurisu/boinga"
+import (
+    "github.com/ishiikurisu/boinga"
+    "fmt"
+    "syscall/js"
+)
 
 func main() {
-
+    js.Global().Set("toBoinga", js.FuncOf(toBoinga))
+    js.Global().Set("fromBoinga", js.FuncOf(fromBoinga))
+    fmt.Println("Go WASM is ready")
+    <-make(chan bool)
 }
-func ToBoinga(inlet string) string {
-    return boinga.ToBoinga(inlet)
+
+func toBoinga(this js.Value, params []js.Value) interface{} {
+    return js.ValueOf(boinga.ToBoinga(params[0].String()))
 }
 
-func FromBoinga(inlet string) string {
-    return boinga.FromBoinga(inlet)
+func fromBoinga(this js.Value, params []js.Value) interface{} {
+    return js.ValueOf(boinga.FromBoinga(params[0].String()))
 }
